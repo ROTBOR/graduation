@@ -1,0 +1,195 @@
+<!doctype html>
+<html>
+	<head>
+		<meta charset="UTF-8">
+		<title></title>
+		<meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no" />
+		<link href="css/mui.min.css" rel="stylesheet" />
+		<style>
+		.mui-btn, button, input[type=button], input[type=reset], input[type=submit]{
+    		border-radius: 0;
+    		border: 0px solid #ccc;
+		}		
+		
+		.title-right {
+		    float: right;
+		    font-size: 17px;
+		    font-weight: 500;
+		    line-height: 44px !important;
+		    position: absolute;
+		    display: block;
+		    width: 100%;
+		    margin: 0 0px !important;
+		    padding: 0 !important;
+		    text-align: center;
+		    white-space: nowrap;
+		    color: #000;
+		    display: inline-block;
+		    overflow: hidden;
+		    width: auto;
+		    margin: 0;
+		    text-overflow: ellipsis;
+		}
+		</style>
+	</head>
+	<body>
+		<header class="mui-bar mui-bar-nav">
+		    <a class="mui-action-back mui-icon mui-icon-left-nav mui-pull-left"></a>
+		    <h1 class="mui-title">详情</h1>
+		    <span id="add" class="title-right mui-icon-right-nav mui-icon mui-icon-compose"></span>
+		</header>
+		<div class="mui-content">
+			<div><img id="show" height="250" width="400" /></div>
+			<div class="mui-card">
+				<div class="mui-card-content">
+					<div class="mui-card-content-inner">
+						<div><font id="name" size="5"></font></div>
+					</div>
+					<div class="mui-card-footer">
+						<div class="mui-card-link"><font id="locate" size="4"></font></div>
+						<div class="mui-icon mui-icon-location mui-pull-right"></div>
+					</div>
+				</div>
+			</div>
+			<div class="mui-card">
+				<div class="mui-card-header">
+					<div class="mui-card-link"><font size="3">家长评论</font></div>
+					<div class="mui-card-link">
+						<font size="3">共<font id = "cnt" size="3"></font>条</font>
+						<span class="mui-icon mui-icon-forward"></span>
+					</div>
+				</div>
+				<div class="mui-card-content-inner">
+					<ul class="mui-table-view" id="talk">
+						<li class="mui-table-view-cell mui-media" v-for="item in items">
+							<a href="javascript:;">
+								<img class="mui-media-object mui-pull-left" v-bind:src="item.head">
+								{{item.name}}
+								<div class="mui-media-body">
+									<p class='mui-ellipsis'>
+										{{item.text}}
+									</p>
+								</div>
+								<div class="mui-media-body">
+									<span class="mui-icon mui-icon-more mui-pull-right"></span>
+									<span class="mui-media-object"><h6>{{item.time2}}</h6></span>
+								</div>
+							</a>
+						</li>
+					</ul>
+				</div>
+			</div>
+			<nav class="mui-bar mui-bar-tab" style="font-size: 0;">
+		    	<button type="button" id="ask" class="mui-btn" style="background-color: white;;color:black;font-size: 25px; width:50%;">
+		        	<span class="iconfont icon-kanjiax" style="font-size: 20px;"></span>
+		        	<span style="font-size: 16px;">在线咨询</span>
+		    	</button>
+		    	<button type="button" id="bao" class="mui-btn" style="background-color:#ff651b;color:#fff;font-size: 25px;width:50%;">
+		        	<span class="iconfont icon-dianhua1" style="font-size: 20px;"></span>
+		        	<span style="font-size: 16px;">立即报名</span>
+		    	</button>
+			</nav>
+		</div>
+		<script src="js/mui.js" type="text/javascript" charset="utf-8"></script>
+		<script src="js/vue.js"></script>
+		<script type="text/javascript">
+			var talk = new Vue({
+    			el: '#talk',
+    			data: {
+        			items: []
+	    		}
+			});
+		
+			if(mui.os.plus){
+				mui.plusReady(function(){
+					var self = plus.webview.currentWebview();
+					document.getElementById("show").src = self.img;
+					document.getElementById("name").innerHTML = self.name;
+					document.getElementById("locate").innerHTML = self.locate;
+					mui.ajax('http://192.168.0.3:8080/orgtalk/'+ self.sub, {
+						data: {
+						
+						},
+						dataType: 'json', //服务器返回json格式数据
+						type: 'get', //HTTP请求类型
+						timeout: 10000, //超时时间设置为10秒；
+						success: function(data) {
+							//服务器返回响应，根据响应结果，分析是否登录成功；
+							talk.items = data.data.list;
+						},
+						error: function(xhr, type, errorThrown) {
+							//异常处理；
+					
+						}
+					});
+					mui.ajax('http://192.168.0.3:8080/orgtalk/cnt/'+ self.sub, {
+						data: {
+						
+						},
+						dataType: 'json', //服务器返回json格式数据
+						type: 'get', //HTTP请求类型
+						timeout: 10000, //超时时间设置为10秒；
+						success: function(data) {
+							//服务器返回响应，根据响应结果，分析是否登录成功；
+							document.getElementById("cnt").innerHTML = data;
+						},
+						error: function(xhr, type, errorThrown) {
+							//异常处理；
+					
+						}
+					});
+					// 预加载chatPage
+					chatPage = mui.preload({
+						url:'single-chat.html',
+					    id:'singleChat',
+					});
+				})
+			}else{
+				var sub = localStorage.getItem('sub');
+				mui.toast(sub);
+			}	
+			
+			document.getElementById("ask").addEventListener('tap',function () {
+				var self = plus.webview.currentWebview();
+				var chatname = self.name;
+				mui.fire(chatPage,'chat',{
+					chatname: chatname
+				})
+				// 打开聊天页面
+				mui.openWindow({
+					id: 'singleChat',
+					show: {
+						aniShow: 'pop-in'
+					},
+					waiting: {
+						autoShow: false
+					}
+				});
+			});
+			
+			document.getElementById("bao").addEventListener('tap',function () {
+				var self = plus.webview.currentWebview();
+				var sub = self.sub;
+				mui.openWindow({
+					url: 'baoming.html',
+					id: 'baoming',
+					extras: {
+						sub: sub
+					}
+				});
+			});
+			
+			document.getElementById('add').addEventListener('tap', function(e) {
+				var self = plus.webview.currentWebview();
+				var sub = self.sub;
+				mui.openWindow({
+					url: "addcomment.html",
+					id: "addcomment.html",
+					extras: {
+						sub: sub
+					}
+				})
+			})
+		</script>
+	</body>
+</html>

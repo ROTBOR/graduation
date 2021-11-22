@@ -1,0 +1,66 @@
+<!doctype html>
+<html>
+
+	<head>
+		<meta charset="UTF-8">
+		<title></title>
+		<meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no" />
+		<link href="css/mui.min.css" rel="stylesheet" />
+		<header class="mui-bar mui-bar-nav">
+			<a class="mui-action-back mui-icon mui-icon-left-nav mui-pull-left"></a>
+		    <h1 class="mui-title">点评</h1>
+			<div style="height: 40px; float: right;padding-top: 7px;padding-right: 3px;"><input type="button" id="" onclick="fabupenyouquan();" value="发布" style="line-height:18px;background-color: green; color: white; font-weight: bold;font-size: 13px;" /></div>
+		</header>
+	</head>
+
+	<body>
+		<form class="mui-input-group" style="margin-top: 40px;">
+			<div>
+				<textarea class="mui-input-row" id="contentpyq" rows="50" cols="50" style="height: 150px;font-size:15px;" placeholder="点评今天的作业吧！"></textarea>
+				
+			</div>
+		</form>
+		<script src="js/mui.min.js"></script>
+		<script type="text/javascript" src="js/jquery-1.8.3.js"></script>
+		<script type="text/javascript">
+			mui.init()
+			
+			function fabupenyouquan() {
+				var self = plus.webview.currentWebview();
+				var name = self.name;
+				var content = $("#contentpyq").val();
+				//获取当前时间
+				var date1 = new Date();
+				//JSON格式时间：2018-03-29T09:50:38.017Z
+				var newtimes1 = date1.toJSON();
+				mui.ajax({
+					type: "post",
+					url: 'http://192.168.0.3:8080/homework',
+					async: true,
+					data: {
+						"org": "育才教育",
+						"text": content,
+						"name": name,
+						"date": newtimes1
+					},
+					dataType: "json",
+					timeout: 1000, //超时时间设置为1秒；
+					headers: {
+						'Content-Type': 'application/json'
+					},
+					success: function(data, status, xhr) {
+						plus.webview.getWebviewById('t_study2.html').reload();
+						mui.back();
+						return data;
+					},
+					error: function(xhr, type, errorThrown) {
+						console.log("error: " + type);
+						mui.toast('发布超时！');
+						return "获取数据失败：服务器错误！";
+					}
+				});
+			}
+		</script>
+	</body>
+
+</html>

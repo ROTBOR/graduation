@@ -1,0 +1,159 @@
+<!doctype html>
+<html>
+
+	<head>
+		<meta charset="UTF-8">
+		<title></title>
+		<meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no" />
+		<link href="css/mui.min.css" rel="stylesheet" />
+		<style>
+			.mui-btn, button, input[type=button], input[type=reset], input[type=submit]{
+    			border-radius: 0;
+    			border: 0px solid #ccc;
+			}	
+		</style>
+	</head>
+
+	<body>
+		<header class="mui-bar mui-bar-nav">
+		    <a class="mui-action-back mui-icon mui-icon-left-nav mui-pull-left"></a>
+		    <h1 class="mui-title">报名</h1>
+		</header>
+		<div class="mui-content">
+			<h5 class="mui-content-padded">孩子信息：</h5>
+		    <form class="mui-input-group" name="form1">
+		    	<div class="mui-input-row">
+					<label>姓名</label>
+					<input type="text" name="name" class="mui-input-clear" placeholder="请输入姓名">
+				</div>
+				<div class="mui-input-row">
+					<label>性别</label>
+					<div class="mui-radio mui-pull-left mui-left">
+						<label>男</label>
+						<input name="sex" type="radio" value="男" checked>
+					</div>
+					<div class="mui-radio mui-pull-left mui-left">
+						<label>女</label>
+						<input name="sex" type="radio" value="女">
+					</div>    
+				</div>
+				<div class="mui-input-row">
+					<label>年龄</label>
+					<input type="number" name="age" class="mui-input-clear" placeholder="请输入年龄">
+				</div>  
+				<div class="mui-input-row">
+					<label>年级</label>
+					<input type="text" name="grade" class="mui-input-clear" placeholder="请输入年级">
+				</div>
+				<div class="mui-input-row">
+					<label>作业辅导</label>
+					<div class="mui-radio mui-pull-left mui-left">
+						<label>需要</label>
+						<input name="homework" type="radio" value="yes" checked>
+					</div>
+					<div class="mui-radio mui-pull-left mui-left">
+						<label>不需要</label>
+						<input name="homework" type="radio" value="no">
+					</div>    
+				</div>
+				<div class="mui-input-row">
+					<label>托管时间</label>
+				</div>
+				<div class="mui-input-row">
+					<div class="mui-radio mui-pull-left mui-left" id="three">
+						<label>三个月</label>
+						<input name="radio" type="radio" checked>
+					</div>
+					<div class="mui-radio mui-pull-left mui-left" id="six">
+						<label>半年</label>
+						<input name="radio" type="radio">
+					</div>
+					<div class="mui-radio mui-pull-left mui-left" id="twelve">
+						<label>一年</label>
+						<input name="radio" type="radio">
+					</div>
+				</div>
+			</form>
+			<h5 class="mui-content-padded">家长信息：</h5>
+			<form class="mui-input-group" name="form2">
+				<div class="mui-input-row">
+					<label>紧急联系人</label>
+					<input type="text" name="parent" class="mui-input-clear" placeholder="请输入紧急联系人">
+				</div>
+				<div class="mui-input-row">
+					<label>紧急联系电话</label>
+					<input type="number" name="phone" class="mui-input-clear" placeholder="请输入紧急联系人电话">
+				</div>
+			</form>
+			<nav class="mui-bar mui-bar-tab" style="font-size: 0;">
+		    	<button type="button" id="ask" class="mui-btn" style="background-color: white;;color:black;font-size: 25px; width:50%;">
+		        	<span class="iconfont icon-kanjiax" style="font-size: 20px;"></span>
+		        	<span style="font-size: 16px;" id="money">实付：￥300.00</span>
+		    	</button>
+		    	<button type="button" id="bao" class="mui-btn" style="background-color:#15B5E9;color:#fff;font-size: 25px;width:50%;">
+		        	<span class="iconfont icon-dianhua1" style="font-size: 20px;"></span>
+		        	<span style="font-size: 16px;">立即报名</span>
+		    	</button>
+			</nav>
+		</div>
+		<script src="js/mui.min.js"></script>
+		<script src="js/jquery-1.8.3.js"></script>
+		<script type="text/javascript">
+			mui.init()
+			
+			document.getElementById("three").addEventListener('tap',function () {
+				document.getElementById("money").innerHTML = "实付：￥300.00";
+			})
+			
+			document.getElementById("six").addEventListener('tap',function () {
+				document.getElementById("money").innerHTML = "实付：￥600.00"; 
+			})
+			
+			document.getElementById("twelve").addEventListener('tap',function () {
+				document.getElementById("money").innerHTML = "实付：￥1200.00"; 
+			})
+			
+			document.getElementById("bao").addEventListener('tap',function () {
+				var name = document.form1.name.value;
+				var age = document.form1.age.value;
+				var grade = document.form1.grade.value;
+    			var sex="";
+				var radio=document.getElementsByName("sex");
+				for(var i=0;i<radio.length;i++){
+					if(radio[i].checked==true){
+						sex=radio.item(i).value;
+						break;
+					}
+				}
+				var parent = document.form2.parent.value;
+				var phone = document.form2.phone.value;
+				mui.ajax('http://192.168.0.3:8080/baby', {
+					data: {
+						 "name":name,
+						 "age":age,
+						 "grade":grade,
+						 "sex":sex,
+						 "pname":parent,
+						 "phone":phone
+					},
+					dataType: "json",
+					headers: {
+						'Content-Type': 'application/json'
+					},
+					type: 'post', //HTTP请求类型
+					timeout: 10000, //超时时间设置为10秒；
+					success: function(data) {
+						mui.openWindow({
+							url: 'success.html',
+							id: 'success',
+						});
+					},
+					error: function(xhr, type, errorThrown) {
+						//异常处理；
+					}
+				});
+			})
+		</script>
+	</body>
+
+</html>

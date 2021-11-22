@@ -1,0 +1,145 @@
+<!doctype html>
+<html>
+
+	<head>
+		<meta charset="UTF-8">
+		<title></title>
+		<meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no" />
+		<link href="css/mui.min.css" rel="stylesheet" />
+		<style type="text/css">
+			body {
+				background-color: black;
+			}
+			
+			.guide-img {
+				width: 100%;
+			}
+			
+			#start1,#start2{
+				position: absolute;
+				bottom: 40px;
+				width: 60%;
+				left: 20%;
+			}
+		</style>
+	</head>
+
+	<body>
+		<div class="mui-content">
+			<div class="mui-slider mui-fullscreen">
+				<div class="mui-slider-group">
+					
+					<div class="mui-slider-item">
+						<a href="javascript:;">
+							<img class="guide-img" src="images/parent.jpg">
+							<button class="mui-btn mui-btn-blue mui-btn-outlined" type="button" id="start1">
+								我 是 家 长
+							</button>
+						</a>
+					</div>
+					<div class="mui-slider-item">
+						<a href="javascript:;">
+							<img class="guide-img" src="images/teacher.jpg">
+							<button class="mui-btn mui-btn-blue mui-btn-outlined" type="button" id="start2">
+								我 是 老 师
+							</button>
+						</a>
+					</div>
+				</div>
+			</div>
+		</div>
+		<script src="js/mui.min.js"></script>
+		<!--sdk-->
+		<script src="sdk/strophe.js"></script>
+		<script src="sdk/easemob.im-1.1.js"></script>
+		<script src="sdk/easemob.im-1.1.shim.js"></script><!--兼容老版本sdk需引入此文件-->
+		<!--config-->
+		<script src="js/easemob.im.config.js"></script>
+		<script type="text/javascript">
+			mui.init();
+			mui.plusReady(function() {
+				/**
+				 * 获取系统状态栏高度
+				 * http://www.html5plus.org/doc/zh_cn/navigator.html#plus.navigator.getStatusbarHeight
+				 */
+				var sh = plus.navigator.getStatusbarHeight();
+				/**
+				 * 获取设备屏幕高度分辨率以及宽度分辨率
+				 * http://www.html5plus.org/doc/zh_cn/device.html#plus.screen.resolutionHeight
+				 * http://www.html5plus.org/doc/zh_cn/device.html#plus.screen.resolutionWidth
+				 */
+				var h = plus.screen.resolutionHeight;
+				var w = plus.screen.resolutionWidth;
+				/**
+				 * 设置图片高度，这里图片并不规范；
+				 * 实际开发中，建议大家制作iphone6plus规格的图片；
+				 */
+				var imgs = document.querySelectorAll(".guide-img");
+				for(var i = 0, len = imgs.length; i < len; i++) {
+					imgs[i].style.height = (h - sh) + "px";
+					imgs[i].style.width = w + "px";
+				}
+				
+				var username = null;
+				var password = null;
+				// 页面传参数事件监听
+				window.addEventListener('show',function(event){
+			    // 获得事件参数
+			    	username = event.detail.username;
+			    	password = event.detail.password;
+			    });
+				var mainPage = null;
+				mainPage = mui.preload({
+					"url": 'parent.html',
+					"id": 'parent'
+				});
+				var mainPage2 = null;
+				mainPage2 = mui.preload({
+					"url": 'teacher.html',
+					"id": 'teacher'
+				});
+	
+//				plus.navigator.closeSplashscreen();
+				document.getElementById("start1").addEventListener("tap", function() {
+					mui.fire(mainPage,'show',{
+				             	username:username,
+				             	password:password
+					});
+					setTimeout(function() {
+						mui.openWindow({
+							id: 'parent',
+							show: {
+							aniShow: 'pop-in'
+							},
+							waiting: {
+								autoShow: false
+							}
+						});
+					}, 0);
+				});
+				document.getElementById("start2").addEventListener("tap", function() {
+					mui.fire(mainPage2,'show',{
+				             	username:username,
+				             	password:password
+					});
+					setTimeout(function() {
+						mui.openWindow({
+							id: 'teacher',
+							show: {
+							aniShow: 'pop-in'
+							},
+							waiting: {
+								autoShow: false
+							}
+						});
+					}, 0);
+				});
+			});
+			/**
+			 * 重写mui.back()，什么都不执行，反之用户返回到入口页；
+			 */
+			mui.back = function() {};
+		</script>
+	</body>
+
+</html>

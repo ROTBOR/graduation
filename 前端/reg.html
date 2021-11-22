@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html class="ui-page-login">
+<head>
+    <meta charset="utf-8"/>
+    <meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no"/>
+    <meta name="apple-mobile-web-app-capable" content="yes"/>
+    <meta name="apple-mobile-web-app-status-bar-style" content="black"/>
+    <title>MUI框架手机端重置密码页面</title>
+    <link href="css/mui.min.css" rel="stylesheet"/>
+    <style>
+        .hqyzm{
+            position: absolute;
+            right: 10px;
+            top: 4px;
+            background-color: #fb4746;
+            color: #fff;
+            border-radius: 30px;
+            border: none;
+        }
+    </style>
+</head>
+<body>
+    <header class="mui-bar mui-bar-nav">
+        <a class="mui-action-back mui-icon mui-icon-left-nav mui-pull-left"></a>
+        <h1 class="mui-title">注册</h1>
+    </header>
+    <div class="mui-content">
+        <form class="mui-input-group">
+            <div class="mui-input-row">
+                <label>账号</label>
+                <input id='username' type="text" class="mui-input-clear mui-input" placeholder="请输入账号"/>
+            </div>
+            <div class="mui-input-row">
+                <label>昵称</label>
+                <input id='nickname' type="text" class="mui-input-clear mui-input" placeholder="请输入昵称"/>
+            </div>
+            <div class="mui-input-row">
+                <label>密码</label>
+                <input id='password' type="password" class="mui-input-clear mui-input" placeholder="请输入密码"/>
+            </div>
+            <div class="mui-input-row">
+                <label>确认密码</label>
+                <input id='password_confirm' type="password" class="mui-input-clear mui-input" placeholder="请再次输入密码"/>
+            </div>
+        </form>
+        <div class="mui-content-padded">
+            <button id='reg' class="mui-btn mui-btn-block mui-btn-danger border-radius">注 册</button>
+        </div>
+    </div>
+    
+    	<script src="js/mui.min.js"></script>
+		<!--sdk-->
+		<script src="sdk/strophe.js"></script>
+		<script src="sdk/easemob.im-1.1.js"></script>
+		<script src="sdk/easemob.im-1.1.shim.js"></script><!--兼容老版本sdk需引入此文件-->
+		<!--config-->
+		<script src="js/easemob.im.config.js"></script>
+		<script>
+			mui.init();
+			
+			// 输入参数
+			var regConfig = {
+				username: mui("#username")[0],
+				nickname: mui("#nickname")[0],
+				password: mui("#password")[0],
+				passwordConfirm: mui("#password_confirm")[0]
+			};		
+			
+			// 注册事件监听
+			mui("#reg")[0].addEventListener('tap',function(){
+				var username = regConfig.username.value;
+				var nickname = regConfig.nickname.value;
+				var password = regConfig.password.value;
+				var passwordConfirm = regConfig.passwordConfirm.value;
+				
+				// 账号校验
+				if (!isMobile(username)){
+	                mui.toast("账号格式不正确");
+	                return;
+	            }
+				// 昵称非空校验
+				if (!isEmpty(nickname)){
+					mui.toast('昵称不能为空');
+					return;
+				}
+				// 密码非空校验
+				if (!isEmpty(password)){
+					mui.toast('密码不能为空');
+					return;
+				}
+				// 密码重复校验
+				if (passwordConfirm != password) {
+					mui.toast('密码两次输入不一致');
+					return;
+				}
+				
+				var options = {
+					username : username,
+					password : password,
+					nickname : nickname,
+					appKey : Easemob.im.config.appkey,
+					success : function(result) {
+						//注册成功;
+						console.log(JSON.stringify(result))
+						mui.toast('注册成功');
+					},
+					error : function(e) {
+						//注册失败;
+						console.log(JSON.stringify(e));
+						mui.toast('注册失败：'+e.error);
+						//如果用户存在就直接跳转
+		                if(e.error=="duplicate_unique_property_exists"){
+		                	// 跳转到聊天界面
+		                	window.location.href="index.html"
+		                }
+					}
+				};
+				Easemob.im.Helper.registerUser(options);
+			});		
+
+			// 验证帐号是否合法
+			// 验证规则：字母、数字、下划线组成，字母开头，4-11位。
+			function isMobile(value) {
+                var validateReg = /^[a-zA-z]\w{3,10}$/;
+				return validateReg.test(value);
+            }
+			
+			// 是否为空
+			function isEmpty(value){
+				var validateReg = /^\S+$/;
+				return validateReg.test(value);
+			}
+		</script>
+</body>
+</html>

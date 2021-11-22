@@ -1,0 +1,117 @@
+{
+	"index.html": {
+		"resources": [
+			"home.html"
+		],
+		"refer": [
+			"home.html",
+			"baby.html",
+			"mine.html",
+			"msg.html",
+			"guide.html",
+			"reg.html",
+			"parent.html"
+		]
+	},
+	"parent.html": {
+		"resources": [
+			"home.html",
+			"baby.html"
+		],
+		"refer": [
+			"home.html",
+			"baby.html",
+			"msg.html",
+			"msg2.html",
+			"setting.html"
+		]
+	},
+	"guide.html": {
+		"refer": [
+			"parent.html",
+			"teacher.html"
+		]
+	},
+	"msg2.html": {
+		"refer": [
+			"single-chat.html"
+		]
+	},
+	"baby.html": {
+		"resources": [
+			"images/签到.jpg"
+		],
+		"refer": [
+			"p_call.html",
+			"p_eat.html",
+			"p_study.html"
+		]
+	},
+	"teacher.html": {
+		"resources": [
+			"home.html",
+			"app.html",
+			"msg2.html"
+		],
+		"refer": [
+			"home.html",
+			"baby.html",
+			"msg2.html",
+			"moments.html",
+			"app.html",
+			"setting.html",
+			"msg.html",
+			"setting2.html",
+			"addfriendster.html"
+		]
+	},
+	"msg.html": {
+		"refer": [
+			"single-chat.html"
+		]
+	},
+	"home.html": {
+		"refer": [
+			"detail.html"
+		]
+	},
+	"detail.html": {
+		"refer": [
+			"baoming.html",
+			"addcomment.html"
+		]
+	},
+	"baoming.html": {
+		"refer": [
+			"success.html"
+		]
+	},
+	"success.html": {
+		"refer": [
+			"home.html"
+		]
+	},
+	"app.html": {
+		"refer": [
+			"t_eat.html",
+			"stu.html",
+			"t_call.html",
+			"t_study.html"
+		]
+	},
+	"t_eat.html": {
+		"refer": [
+			"addeat.html"
+		]
+	},
+	"t_study.html": {
+		"refer": [
+			"t_study2.html"
+		]
+	},
+	"t_study2.html": {
+		"refer": [
+			"addopinion.html"
+		]
+	}
+}

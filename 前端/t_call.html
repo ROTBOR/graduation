@@ -1,0 +1,98 @@
+<!doctype html>
+<html>
+
+	<head>
+		<meta charset="UTF-8">
+		<title></title>
+		<meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no" />
+		<link href="css/mui.min.css" rel="stylesheet" />
+	</head>
+
+	<body>
+		<header class="mui-bar mui-bar-nav">
+		    <a class="mui-action-back mui-icon mui-icon-left-nav mui-pull-left"></a>
+		    <h1 class="mui-title">点名</h1>
+		</header>
+		<div class="mui-content">
+			<h3 class="mui-text-center" style="color:burlywood;font-size: 1.6em;">今天是<font id="date"></font></h3>
+			<h5 class="mui-content-padded">签到情况：</h5>
+		    <div class="mui-card">
+				<ul class="mui-table-view" id="stu">
+					<li class="mui-table-view-cell" v-for="item in items">
+						{{item.name}}
+						<button type="button" class="mui-btn" v-on:tap="list($index)" v-bind:id="item.id">
+							未签到
+						</button>
+					</li>
+				</ul>
+			</div>
+		</div>
+		<script src="js/mui.min.js"></script>
+		<script src="js/vue.js"></script>
+		<script type="text/javascript">
+			mui.init()
+			var date = new Date();
+	        var month = date.getMonth() + 1;
+	        var strDate = date.getDate();
+	        var currentdate = month + "月" + strDate + "日";
+			document.getElementById("date").innerHTML=currentdate;
+			
+			var stu = new Vue({
+	    		el: '#stu',
+	    		data: {
+	        		items: []
+	    		},
+	    		methods: {
+	    			list: function(index) {
+						var id = this.items[index].id;
+						var name = this.items[index].name;
+						//获取当前时间
+						var date1 = new Date();
+						//JSON格式时间：2018-03-29T09:50:38.017Z
+						var newtimes1 = date1.toJSON();
+						document.getElementById(id).setAttribute("class","mui-btn mui-btn-primary");
+						document.getElementById(id).innerHTML="已签到";
+						mui.ajax({
+							type: "post",
+							url: 'http://192.168.0.3:8080/signin',
+							data: {
+								"org": "育才教育",
+								"name": name,
+								"date": newtimes1,
+								"locate":"集美区岑东路1号",
+								"mark":"签到成功！"
+							},
+							dataType: "json",
+							timeout: 1000, //超时时间设置为1秒；
+							headers: {
+								'Content-Type': 'application/json'
+							},
+							success: function(data, status, xhr) {
+								return data;
+							},
+							error: function(xhr, type, errorThrown) {
+								console.log("error: " + type);
+							}
+						});
+					}
+	    		}
+			});
+			mui.ajax('http://192.168.0.3:8080/baby', {
+				data: {
+					
+				},
+				dataType: 'json', //服务器返回json格式数据
+				type: 'get', //HTTP请求类型
+				async: false,
+				timeout: 10000, //超时时间设置为10秒；
+				success: function(data) {
+					stu.items = data.data.list;
+				},
+				error: function(xhr, type, errorThrown) {
+					//异常处理；	
+				}
+			});
+		</script>
+	</body>
+
+</html>

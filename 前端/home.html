@@ -1,0 +1,194 @@
+<!doctype html>
+<html>
+
+	<head>
+		<meta charset="UTF-8">
+		<title>Hello MUI</title>
+		<meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no" />
+		<link href="css/mui.min.css" rel="stylesheet" />
+	</head>
+
+	<body>
+		<div class="mui-content">
+			<div id="map">
+				<span class="mui-icon mui-icon-map" id='locate'><font size="4" id='location'>手动定位</font></span>
+				<span class="mui-icon mui-icon-forward"></span>
+			</div>
+			<div class="mui-input-row mui-search" id="searchForm">
+    			<input type="search" class="mui-input-clear" placeholder="搜索" id="searchInput" onkeyup="enterSearch(event)">
+			</div>
+			
+			<h2><u>附近门店</u></h2>
+			<span><font id='zonghe' size="4" >综合排序</font></span>&nbsp;&nbsp;&nbsp;&nbsp;
+			<span><font id='dist' size="4" >距离排序</font></span>
+			<div id="allmap"></div>
+			
+			<ul class="mui-table-view" id="org">
+				<li class="mui-table-view-cell mui-media" v-for="item in items" v-on:tap="list($index)">
+					<a data-href="{{item.id}}">
+						<img class="mui-media-object mui-pull-left" v-bind:src="item.image">
+						<div class="mui-media-body">
+							{{item.name}}
+							<p class='mui-ellipsis'>
+								<span class="mui-icon mui-icon-location">
+									<font size="3" >{{item.locate}}</font>
+								</span>
+							</p>
+						</div>
+						<div class="mui-media-body mui-pull-right">{{item.distance}}km</div>
+					</a>
+				</li>
+			</ul>
+		</div>
+	<script type="text/javascript" src="http://api.map.baidu.com/getscript?v=2.0&ak=HR3RRyTsXYdQ3QzzG5yUkg0q"></script>
+    <script type="text/javascript" src="http://developer.baidu.com/map/jsdemo/demo/convertor.js"></script>
+	<script src="js/mui.min.js"></script>
+	<script src="js/vue.js"></script>
+	<script type="text/javascript">
+		mui.init({
+			swipeBack:false, //启用右滑关闭功能
+			gestureConfig:{
+           		longtap: true //默认为false
+          	}
+		});
+		
+		var orgs = new Vue({
+    		el: '#org',
+    		data: {
+        		items: []
+    		},
+    		methods: {
+    			list: function(index) {
+					var sub = this.items[index].id;
+					var name = this.items[index].name;
+					var img = this.items[index].image;
+					var locate = this.items[index].locate;
+					mui.openWindow({
+						url: 'detail.html',
+						id: 'detail',
+						extras: {
+							sub: sub,
+							name: name,
+							img: img,
+							locate: locate
+						}
+					});
+					if(!mui.os.plus){
+						localStorage.setItem('sub', sub);
+					}
+				}
+    		}
+		});
+		
+		// 搜索事件,获取搜索关键词
+        function enterSearch(event){
+            if(event.keyCode == 13) {//用户点击回车的事件号为13
+                var keyword = document.getElementById('searchInput').value;
+                var keyword2 = encodeURI(keyword);
+                mui.ajax('http://192.168.0.3:8080/org/' + keyword2, {
+					data: {
+					
+					},
+					dataType: 'json', //服务器返回json格式数据
+					type: 'get', //HTTP请求类型
+					timeout: 10000, //超时时间设置为10秒；
+					success: function(data) {
+						//服务器返回响应，根据响应结果，分析是否登录成功；
+						orgs.items = data.data.list;
+						document.getElementById('zonghe').style = null;
+						document.getElementById('dist').style = null;
+					},
+					error: function(xhr, type, errorThrown) {
+						//异常处理；
+				
+					}
+				});
+            }
+        }
+        
+		document.getElementById("locate").addEventListener('tap',function () {
+			mui.plusReady(function() {
+				var winWidth = document.documentElement.clientWidth;
+				var winHeight = document.documentElement.clientHeight;
+				document.getElementById('allmap').style.height = (winHeight - 45) + 'px';
+				var map = new BMap.Map("allmap");
+				plus.geolocation.getCurrentPosition(function(p) {
+					var address = p.address.province + p.address.city + p.address.district + p.address.street + p.address.streetNum;
+					var gpsPoint = new BMap.Point(p.coords.longitude, p.coords.latitude);
+					map.centerAndZoom(gpsPoint, 16);
+					var marker = new BMap.Marker(gpsPoint);
+					var label = new BMap.Label(address, {
+						offset: new BMap.Size(20, -10)
+					}); //标注标签  
+					marker.setLabel(label) //设置标注说明
+					map.addOverlay(marker);
+					marker.addEventListener("click", function(e) { // 监听事件，提示标注点坐标信息
+						document.getElementById("location").innerHTML = address;
+						document.getElementById("allmap").innerHTML = null;
+						document.getElementById("allmap").style = null;
+						document.getElementById('zonghe').style = "font-weight:bold";
+						mui.ajax('http://192.168.0.3:8080/org', {
+							data: {},
+							dataType: 'json', //服务器返回json格式数据
+							type: 'get', //HTTP请求类型
+							timeout: 10000, //超时时间设置为10秒；
+							success: function(data) {
+								orgs.items = data.data.list;
+							},
+							error: function(xhr, type, errorThrown) {
+								//异常处理；
+							}
+						});
+					});
+				}, function(e) {}, {
+					provider: 'baidu',
+					coordsType: 'bd09ll'});
+			});
+		})
+		
+		document.getElementById("zonghe").addEventListener('tap',function () {
+			mui.ajax('http://192.168.0.3:8080/org', {
+				data: {
+			
+				},
+				dataType: 'json', //服务器返回json格式数据
+				type: 'get', //HTTP请求类型
+				timeout: 10000, //超时时间设置为10秒；
+				success: function(data) {
+					//服务器返回响应，根据响应结果，分析是否登录成功；
+					orgs.items = data.data.list;
+					document.getElementById('zonghe').style = "font-weight:bold";
+					document.getElementById('dist').style = null;
+				},
+				error: function(xhr, type, errorThrown) {
+					//异常处理；
+			
+				}
+			});
+		})
+		
+		document.getElementById("dist").addEventListener('tap',function () {
+			mui.ajax('http://192.168.0.3:8080/org/asc', {
+				data: {
+				
+				},
+				dataType: 'json', //服务器返回json格式数据
+				type: 'get', //HTTP请求类型
+				timeout: 10000, //超时时间设置为10秒；
+				success: function(data) {
+					//服务器返回响应，根据响应结果，分析是否登录成功；
+					orgs.items = data.data.list;
+					document.getElementById('zonghe').style = null;
+					document.getElementById('dist').style = "font-weight:bold";
+				},
+				error: function(xhr, type, errorThrown) {
+					//异常处理；
+			
+				}
+			});
+		})
+			
+	</script>
+	</body>
+	
+</html>

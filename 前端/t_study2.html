@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html>
+
+	<head>
+		<meta charset="utf-8">
+		<title>Hello MUI</title>
+		<meta name="viewport" content="width=device-width, initial-scale=1,maximum-scale=1,user-scalable=no">
+		<meta name="apple-mobile-web-app-capable" content="yes">
+		<meta name="apple-mobile-web-app-status-bar-style" content="black">
+
+		<!--标准mui.css-->
+		<link rel="stylesheet" href="css/mui.min.css">
+		<!--App自定义的css-->
+		<link rel="stylesheet" type="text/css" href="css/app.css" />
+		<style>
+			.mui-row.mui-fullscreen>[class*="mui-col-"] {
+				height: 100%;
+			}
+			.mui-col-xs-3,
+			.mui-control-content {
+				overflow-y: auto;
+				height: 100%;
+			}
+			.mui-segmented-control .mui-control-item {
+				line-height: 50px;
+				width: 100%;
+			}
+			.mui-segmented-control.mui-segmented-control-inverted .mui-control-item.mui-active {
+				background-color: #fff;
+			}
+		</style>
+	</head>
+
+	<body>
+		<header class="mui-bar mui-bar-nav">
+			<a class="mui-action-back mui-icon mui-icon-left-nav mui-pull-left"></a>
+			<h1 class="mui-title">作业</h1>
+			<a id="add" class="mui-icon mui-icon-right-nav mui-pull-right">发布</a>
+		</header>
+		<div class="mui-content mui-row mui-fullscreen">
+			<div class="mui-col-xs-3">
+				<div id="segmentedControls" class="mui-segmented-control mui-segmented-control-inverted mui-segmented-control-vertical">
+				</div>
+			</div>
+			<div id="segmentedControlContents" class="mui-col-xs-9" style="border-left: 1px solid #c8c7cc;">
+			</div>
+		</div>
+		<script src="js/mui.min.js"></script>
+		<script type="text/javascript" src="js/jquery-1.8.3.js"></script>
+		<script src="js/vue.js"></script>
+		<script>
+			mui.init({
+				swipeBack: true //启用右滑关闭功能
+			});
+			
+			mui.plusReady(function() {
+				var datas = [];
+				var self = plus.webview.currentWebview();
+				var name = self.name;
+				mui.ajax('http://192.168.0.3:8080/homework/' + name, {
+					data: {
+						
+					},
+					dataType: 'json', //服务器返回json格式数据
+					type: 'get', //HTTP请求类型
+					async: false,
+					timeout: 10000, //超时时间设置为10秒；
+					success: function(data) {
+						datas = data.data.list;
+	//					document.getElementById('segmentedControls').innerHTML = datas[0].date2;
+					},
+					error: function(xhr, type, errorThrown) {
+						//异常处理；	
+					}
+				});
+				var controls = document.getElementById("segmentedControls");
+				var contents = document.getElementById("segmentedControlContents");
+				var html = [];
+				for (var key in datas) {
+					html.push('<a class="mui-control-item" href="#content' + key + '">' + datas[key].date2 + '</a>');
+				}
+				controls.innerHTML = html.join('');
+				html = [];
+				for (var key in datas) {
+					html.push('<div id="content' + key + '" class="mui-control-content"><div class="mui-card">');
+						html.push('<div class="mui-card-header">' + datas[key].name + '：作业点评' +
+						'<button id="save'+key+'" type="button" class="mui-btn mui-btn-success" name='+datas[key].id+'>保存</button></div>');
+						html.push('<div class="mui-card-content-inner"><textarea style="font-size:15px;">' 
+						+ datas[key].text + '</textarea></div>');
+					html.push('</div></div>');
+				}
+				contents.innerHTML = html.join('');
+				 //默认选中第一个
+				controls.querySelector('.mui-control-item').classList.add('mui-active');
+				contents.querySelector('.mui-control-content').classList.add('mui-active');
+				
+				for (var key in datas) {
+					document.getElementById("save"+key).addEventListener('tap', function(e) {
+						var a = this.getAttribute("id");
+						var a2 = document.getElementById(a);
+						var b = a2.parentNode.nextSibling.firstChild;
+						var content = $(b).val();
+						var id = this.getAttribute("name");
+						mui.ajax('http://192.168.0.3:8080/homework', {
+							data: {
+								"id":id,
+								"text": content
+							},
+							dataType: "json",
+							type: 'put', //HTTP请求类型
+							timeout: 10000, //超时时间设置为10秒；
+							headers: {
+								'Content-Type': 'application/json'
+							},
+							success: function(data) {
+								plus.webview.getWebviewById('t_study2.html').reload();
+							},
+							error: function(xhr, type, errorThrown) {
+								//异常处理；	
+							}
+						});
+					})
+				}
+			});
+			
+			document.getElementById('add').addEventListener('tap', function(e) {
+				var self = plus.webview.currentWebview();
+				var name = self.name;
+				mui.openWindow({
+					url: "addopinion.html",
+					id: "addopinion.html",
+					extras: {
+						name: name
+					}
+				})
+			})
+		</script>
+
+	</body>
+
+</html>

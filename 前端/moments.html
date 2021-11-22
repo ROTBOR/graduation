@@ -1,0 +1,109 @@
+<!doctype html>
+<html>
+
+	<head>
+		<meta charset="UTF-8">
+		<title>Hello MUI</title>
+		<meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no" />
+		<link href="css/mui.min.css" rel="stylesheet" />
+		<style>
+			
+		</style>
+	</head>
+
+	<body>
+		<div class="mui-content">
+			<ul class="mui-table-view" id="moment">
+				<li class="mui-table-view-cell mui-media" v-for="item in items">
+					<a href="javascript:;">
+						<img class="mui-media-object mui-pull-left" v-bind:src="item.head">
+						{{item.name}}
+						<div class="mui-media-body">
+							<p class='mui-ellipsis'>
+								{{item.content}}
+							</p>
+						</div>
+						
+						<div class="mui-media-body">
+							<span class="mui-icon mui-icon-more mui-pull-right"></span>
+							<span class="mui-media-object"><h6>{{item.time2}}</h6></span>
+						</div>
+						<!--<ul class="mui-table-view">
+							<p class="mui-table-view-cell mui-media" v-for="array in items2">
+								<a href="javascript:;">
+									{{array.name}}：{{array.content}}
+								</a>
+							</p>
+						</ul>-->
+						<div class="mui-media-body">
+							<img src="images/ff.jpg" :onerror="defaultImg($index)" width="200" height="200">
+							
+						</div>
+					</a>
+				</li>
+			</ul>
+		</div>
+	<script src="js/mui.min.js"></script>
+	<script src="js/vue.js"></script>
+	<script type="text/javascript">
+		mui.init({
+			swipeBack:false //启用右滑关闭功能
+		});
+		
+		var orgs = new Vue({
+    		el: '#moment',
+    		data: {
+        		items: []
+    		},
+    		methods: {
+    			defaultImg:function(index){
+    				var img = this.items[index].image;
+    				return 'this.src="'+img+'"';
+    			}
+    		}
+		});
+		
+//		var comments = new Vue({
+//  		el: '#comment',
+//  		data: {
+//      		arrays: []
+//  		}
+//		});
+		
+		mui.ajax('http://192.168.0.3:8080/moment', {
+					data: {
+				
+					},
+					dataType: 'json', //服务器返回json格式数据
+					type: 'get', //HTTP请求类型
+					timeout: 10000, //超时时间设置为10秒；
+					success: function(data) {
+						//服务器返回响应
+						orgs.items = data.data.list;
+					},
+					error: function(xhr, type, errorThrown) {
+						//异常处理；
+				
+					}
+		});
+		
+//		mui.ajax('http://192.168.0.3:8080/comment', {
+//					data: {
+//				
+//					},
+//					dataType: 'json', //服务器返回json格式数据
+//					type: 'get', //HTTP请求类型
+//					timeout: 10000, //超时时间设置为10秒；
+//					success: function(data) {
+//						//服务器返回响应
+//						orgs.items2 = data.data.list;
+//					},
+//					error: function(xhr, type, errorThrown) {
+//						//异常处理；
+//				
+//					}
+//		});
+	</script>
+	</body>
+	
+</html>

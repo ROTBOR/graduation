@@ -1,0 +1,106 @@
+@font-face {font-family: "iconfont";
+  src:url('../fonts/iconfont.ttf') format('truetype'); /* iOS 4.1- */
+}
+
+.iconfont {
+  font-family: "iconfont" !important;
+  font-size: 16px;
+  font-style: normal;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+.icon-wrong:before {
+  content: "\e60a";
+	color: #000;
+	font-size:22px;
+}
+.mui-icon-back:before{
+    color: #000;
+    font-size:22px;
+}
+/*办事指南*/
+.icon-lz:before,
+.icon-hz:before,
+.icon-bz:before,
+.icon-zr:before,
+.icon-cx:before,
+.icon-zx:before,
+.icon-zg:before,
+.icon-ns:before{
+	color: #1c80cd;
+}
+.icon-lz:before {
+  content: "\e636";
+	font-size:38px;
+}
+.icon-hz:before {
+  content: "\e635";
+	font-size:38px;
+}
+.icon-bz:before {
+  content: "\e60b";
+	font-size:38px;
+}
+.icon-zr:before {
+  content: "\e676";
+	font-size:38px;
+}
+.icon-cx:before {
+  content: "\e611";
+	font-size:38px;
+}
+.icon-zx:before {
+  content: "\e639";
+	font-size:38px;
+}
+.icon-zg:before {
+  content: "\e70e";
+	font-size:38px;
+}
+.icon-ns:before {
+  content: "\e6fe";
+	font-size:38px;
+}
+
+.icon-delete:before {
+  content: "\e60a";
+	font-size:20px;
+	color: #fff;
+}
+.icon-add:before {
+  content: "\e63e";
+	font-size:60px;
+	color: #ccc;
+}
+.icon-img:before {
+  content: "\e64c";
+	font-size:60px;
+	color: #ef7a08;
+}
+.icon-setting:before {
+  content: "\e616";
+	font-size:30px;
+	color: #ef7a08;
+}
+
+.login-tel:before {
+  content: "\e646";
+  font-size:30px;
+  color: #ef7a08;
+}
+.login-psw:before {
+  content: "\e689";
+  font-size:30px;
+  color: #ef7a08;
+}
+.login-verify:before {
+  content: "\e603";
+  font-size:30px;
+  color: #ef7a08;
+}
+
+
+
+
+

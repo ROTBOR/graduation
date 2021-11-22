@@ -1,0 +1,120 @@
+<!doctype html>
+<html>
+
+	<head>
+		<meta charset="UTF-8">
+		<title>Hello MUI</title>
+		<meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no" />
+		<link href="css/mui.min.css" rel="stylesheet" />
+		<style>
+			
+		</style>
+	</head>
+
+	<body>
+		<div class="mui-content">
+			<div class="mui-card" id="org">
+				<div class="mui-card-content-inner">
+					<ul class="mui-table-view">
+						<li class="mui-table-view-cell mui-media" v-for="item in items">
+							<a href="javascript:;">
+								<img class="mui-media-object mui-pull-left" v-bind:src="item.image" width="2000" height="2000">
+								{{item.name}}
+								<div class="mui-media-body">
+									<p class='mui-ellipsis'>
+										{{item.locate}}<span class="mui-icon mui-icon-location"></span><!--<span class="mui-icon mui-icon-location"></span>-->
+									</p>
+								</div>
+							</a>
+						</li>
+					</ul>
+				</div>
+			</div>
+					<ul class="mui-table-view mui-grid-view mui-grid-9">
+			            <li class="mui-table-view-cell mui-media mui-col-xs-4"><a href="#">
+			                    <span id="dianming"><img src = "images/dianming.jpg" /></span><br />
+			                    <div class="mui-media-body"><font size="3">点 名</font></div></a></li>
+			            <li class="mui-table-view-cell mui-media mui-col-xs-4"><a href="#">
+			                    <span id="stu"><img src = "images/student.jpg" /></span>
+			                    <div class="mui-media-body"><font size="3">学 生 </font></div></a></li>
+			            <!--<li class="mui-table-view-cell mui-media mui-col-xs-4"><a href="#">
+			                    <span><img src = "images/fee.jpg" /></span>
+			                    <div class="mui-media-body"><font size="3">缴 费</font></div></a></li>-->
+			            <li class="mui-table-view-cell mui-media mui-col-xs-4"><a href="#">
+			                    <span id="shipu"><img src = "images/shipu.jpg" /></span>
+			                    <div class="mui-media-body"><font size="3">食 谱</font></div></a></li>
+			            <li class="mui-table-view-cell mui-media mui-col-xs-4"><a href="#">
+			                    <span id="zuoye"><img src = "images/book.jpg" /></span>
+			                    <div class="mui-media-body"><font size="3">作 业</font></div></a></li>
+		        	</ul> 
+		</div>
+	<script src="js/mui.min.js"></script>
+	<script src="js/vue.js"></script>
+	<script type="text/javascript">
+		mui.init({
+			swipeBack:false //启用右滑关闭功能
+		});
+		
+		document.getElementById("dianming").addEventListener('tap',function () {
+			mui.openWindow({
+				url: 't_call.html',
+				id: 't_call',
+				extras: {
+					
+				}
+			});
+		});
+		
+		document.getElementById("stu").addEventListener('tap',function () {
+			mui.openWindow({
+				url: 'stu.html',
+				id: 'stu',
+				extras: {
+					
+				}
+			});
+		});
+		
+		document.getElementById("shipu").addEventListener('tap',function () {
+			mui.openWindow({
+				url: 't_eat.html',
+				id: 't_eat',
+				extras: {
+					
+				}
+			});
+		});
+		
+		document.getElementById("zuoye").addEventListener('tap',function () {
+			mui.openWindow({
+				url: 't_study.html',
+				id: 't_study',
+				extras: {
+					
+				}
+			});
+		});
+		
+		var org = new Vue({
+    		el: '#org',
+    		data: {
+       			items:[]
+    		}
+		});
+			
+		mui.ajax('http://192.168.0.3:8080/org/o/1', {
+			data: {	},
+			dataType: 'json', //服务器返回json格式数据
+			type: 'get', //HTTP请求类型
+			timeout: 10000, //超时时间设置为10秒；
+			success: function(data) {
+				org.items = data.data.list;
+			},
+			error: function(xhr, type, errorThrown) {
+				//异常处理；			
+			}
+		});
+	</script>
+	</body>
+	
+</html>
